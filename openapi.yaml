@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Payment Blocking Service
+  version: 1.0.0
+  description: API to manage payment blocks for corporate clients
+
+paths:
+  /clients/{clientId}/block:
+    post:
+      summary: Block a client's payments
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Reason for the block (fraud or incorrect_details)
+                details:
+                  type: string
+                  description: Additional details about the block
+      responses:
+        '200':
+          description: Payment block was successful
+        '400':
+          description: Invalid client ID or data
+        '404':
+          description: Client not found
+
+  /clients/{clientId}/unblock:
+    post:
+      summary: Unblock a client's payments
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the client
+      responses:
+        '200':
+          description: Payment unblock was successful
+        '400':
+          description: Invalid client ID
+        '404':
+          description: Client not found
+
+  /clients/{clientId}/check-block:
+    get:
+      summary: Check if a client's payments are blocked
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the client
+      responses:
+        '200':
+          description: Block status of the client
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isBlocked:
+                    type: boolean
+                  reason:
+                    type: string
+                    description: Reason for the block (if any)
+        '400':
+          description: Invalid client ID
+        '404':
+          description: Client not found
